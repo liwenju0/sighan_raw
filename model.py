@@ -38,5 +38,5 @@ class CscModelCorrector(object):
             det_output, logits = self.model(**encoded_text)
         token_ids = torch.argmax(logits, dim=-1).squeeze(-1)
         decode_tokens = self.tokenizer.decode(token_ids[0], skip_special_tokens=False)
-        corrected_text = decode_tokens[1:len(text)]
-        return corrected_text, det_output[0][1:len(text)]
+        corrected_text = decode_tokens[1:len(text)+1]
+        return corrected_text, det_output[0][1:len(text)+1]
