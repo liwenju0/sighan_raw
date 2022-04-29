@@ -16,7 +16,7 @@ train_loader = DataLoader(train_data, shuffle=True, batch_size=6)
 test_loader = DataLoader(test_data, shuffle=False, batch_size=6)
 
 model = CscModel(config=model_config)
-model_corrector = CscModelCorrector(model, train_data.tokenizer)
+model_corrector = CscModelCorrector(model, train_data.tokenizer, model_config)
 param_optimizer = list(model.named_parameters())
 
 no_decay = ['bias', 'gamma', 'beta']
