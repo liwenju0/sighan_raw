@@ -4,5 +4,7 @@ model_config = {
     "max_len": 128,
     "vocab_size": 21128,
     "lr": 2e-5,
-    "clip_norm":0.25
+    "clip_norm":0.25,
+    "base_url":"/Users/milter/Downloads/sighan_raw/pair_data/simplified/",
+# "base_url":"/root/liwenju/sighan_raw/pair_data/simplified/",
 }

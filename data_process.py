@@ -9,8 +9,8 @@ class CscDataset(Dataset):
         self.max_len = config['max_len']
         self.pretrain_model = config['model_path']
         self.tokenizer = BertTokenizerFast.from_pretrained(self.pretrain_model, do_lower_case=True)
-        self.error = "/Users/milter/Downloads/sighan_raw/pair_data/simplified/{}{}_error.txt".format(key_name, name)
-        self.correct = "/Users/milter/Downloads/sighan_raw/pair_data/simplified/{}{}_correct.txt".format(key_name, name)
+        self.error = config['base_url'] + "{}{}_error.txt".format(key_name, name)
+        self.correct = config['base_url']+"{}{}_correct.txt".format(key_name, name)
         self.data_pair = []
         for e, c in zip(open(self.error), open(self.correct)):
             assert len(e.strip()) == len(c.strip())

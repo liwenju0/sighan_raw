@@ -24,12 +24,16 @@ class CscModel(nn.Module):
 
 
 class CscModelCorrector(object):
-    def __init__(self, model: CscModel, tokenizer: BertTokenizerFast):
+    def __init__(self, model: CscModel, tokenizer: BertTokenizerFast, model_config: dict):
         self.model = model
         self.tokenizer = tokenizer
+        self.model_config = model_config
 
     def correct(self, text):
-        encoded_text = self.tokenizer(text)
+        encoded_text = self.tokenizer(text, return_offsets_mapping=True,
+                                      max_length=self.model_config['max_len'], truncation=True,
+                                      padding='max_length', return_tensors='pt',
+                                      return_attention_mask=True, return_token_type_ids=True)
         with torch.no_grad():
             det_output, logits = self.model(**encoded_text)
         decode_tokens = self.tokenizer.decode(torch.argmax(logits, dim=-1))[0]

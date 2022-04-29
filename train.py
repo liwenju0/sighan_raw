@@ -12,8 +12,8 @@ import torch.nn.functional as F
 train_data = CscDataset(config=model_config, name="13", key_name="train")
 test_data = CscDataset(config=model_config, name="13", key_name="test")
 
-train_loader = DataLoader(train_data, shuffle=True, batch_size=25)
-test_loader = DataLoader(test_data, shuffle=False, batch_size=25)
+train_loader = DataLoader(train_data, shuffle=True, batch_size=6)
+test_loader = DataLoader(test_data, shuffle=False, batch_size=6)
 
 model = CscModel(config=model_config)
 model_corrector = CscModelCorrector(model, train_data.tokenizer)
@@ -28,8 +28,10 @@ optimizer_grouped_parameters = [
 optimizer = AdamW(params=optimizer_grouped_parameters, lr=model_config['lr'])
 
 
-def evaluate(predict_func, error="/Users/milter/Downloads/sighan_raw/pair_data/simplified/test13_error.txt",
-             correct="/Users/milter/Downloads/sighan_raw/pair_data/simplified/test13_correct.txt"):
+def evaluate(predict_func, error="test13_error.txt",
+             correct="test13_correct.txt"):
+    error = model_config['base_url'] + error
+    correct = model_config['base_url'] + correct
     """
     句级评估结果，设定需要纠错为正样本，无需纠错为负样本
     X需要纠正且纠正正确
@@ -86,4 +88,4 @@ for i in range(epoches):
         if step % 50 == 0:
             loss, current = loss.item(), step * len(input_ids)
             print(f"loss: {loss:>5f}  [{current:>5d}/{size:>5d}]")
-    evaluate(model_corrector.correct)
+        evaluate(model_corrector.correct)
