@@ -52,9 +52,13 @@ def evaluate(predict_func, error="test13_error.txt",
             if corrected_text == c:
                 X += 1
             flag = True
-            for i in range(len(e)):
-                if not (e[i] != c[i] and det_ouput[i] > 0.5):
-                    flag = False
+            for i in range(min(len(e), model_config['max_len'])):
+                if e[i] != c[i]:
+                    if det_ouput[i] < 0.5:
+                        flag = False
+                else:
+                    if det_ouput[i] > 0.5:
+                        flag = False
             if flag:
                 Xc += 1
         if corrected_text != e:
