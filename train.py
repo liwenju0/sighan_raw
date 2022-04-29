@@ -12,7 +12,7 @@ import torch.nn.functional as F
 train_data = CscDataset(config=model_config, name="13", key_name="train")
 test_data = CscDataset(config=model_config, name="13", key_name="test")
 
-train_loader = DataLoader(train_data, shuffle=True, batch_size=6)
+train_loader = DataLoader(train_data, shuffle=True, batch_size=25)
 test_loader = DataLoader(test_data, shuffle=False, batch_size=6)
 
 model = CscModel(config=model_config)
@@ -76,7 +76,7 @@ def evaluate(predict_func, error="test13_error.txt",
 
 
 
-epoches = 10
+epoches = 20
 for i in range(epoches):
 
     size = len(train_loader.dataset)
@@ -92,4 +92,4 @@ for i in range(epoches):
         if step % 50 == 0:
             loss, current = loss.item(), step * len(input_ids)
             print(f"loss: {loss:>5f}  [{current:>5d}/{size:>5d}]")
-        evaluate(model_corrector.correct)
+    evaluate(model_corrector.correct)
