@@ -89,7 +89,7 @@ def compute_sentence_level_prf(results):
     return acc, precision, recall, f1
 
 class CscModel(nn.Module):
-    def __init__(self, tokenizer, cfg=cfg, device="cpu"):
+    def __init__(self, tokenizer, cfg=cfg, device="cuda"):
         super().__init__()
         self.cfg = cfg
         self.bert = BertForMaskedLM.from_pretrained(cfg.model_path)
@@ -105,8 +105,10 @@ class CscModel(nn.Module):
             text_labels = text_labels.to(self.device)
         else:
             text_labels = None
+        if det_labels:
+            det_labels = det_labels.to(self.device)
         encoded_text = self.tokenizer(texts, padding=True, return_tensors='pt')
-        encoded_text.to(self.device)
+        encoded_text = encoded_text.to(self.device)
         bert_outputs = self.bert(**encoded_text, labels=text_labels, return_dict=True, output_hidden_states=True)
         # 检错概率
         prob = self.detection(bert_outputs.hidden_states[-1])
@@ -119,6 +121,7 @@ class CscModel(nn.Module):
             # pad部分不计算损失
             active_loss = encoded_text['attention_mask'].view(-1, prob.shape[1]) == 1
             active_probs = prob.view(-1, prob.shape[1])[active_loss]
+
             active_labels = det_labels[active_loss]
             det_loss = det_loss_fct(active_probs, active_labels.float())
             # 检错loss，纠错loss，检错输出，纠错输出
