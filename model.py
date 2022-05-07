@@ -92,11 +92,12 @@ class CscModel(nn.Module):
     def __init__(self, tokenizer, cfg=cfg, device="cuda"):
         super().__init__()
         self.cfg = cfg
-        self.bert = BertForMaskedLM.from_pretrained(cfg.model_path)
-        self.detection = nn.Linear(self.bert.config.hidden_size, 1)
-        self.sigmoid = nn.Sigmoid()
-        self.tokenizer = tokenizer
         self.device = device
+        self.bert = BertForMaskedLM.from_pretrained(cfg.model_path).to(self.device)
+        self.detection = nn.Linear(self.bert.config.hidden_size, 1).to(self.device)
+        self.sigmoid = nn.Sigmoid().to(self.device)
+        self.tokenizer = tokenizer
+
 
     def forward(self, texts, cor_labels=None, det_labels=None):
         if cor_labels:
