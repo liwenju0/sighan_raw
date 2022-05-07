@@ -105,7 +105,7 @@ class CscModel(nn.Module):
             text_labels = text_labels.to(self.device)
         else:
             text_labels = None
-        if det_labels:
+        if det_labels is not None:
             det_labels = det_labels.to(self.device)
         encoded_text = self.tokenizer(texts, padding=True, return_tensors='pt')
         encoded_text = encoded_text.to(self.device)
