@@ -10,7 +10,7 @@ class cfg:
     batch_size = 32
     max_epochs = 10
     loss_weight = 0.3
-    train = "train13.json"
-    test = "test13.json"
-    base_url = "/Users/milter/Downloads/sighan_raw/pair_data/simplified/"
-    # base_url="/root/liwenju/sighan_raw/pair_data/simplified/",
+    train = "train15.json"
+    test = "test15.json"
+    #base_url = "/Users/milter/Downloads/sighan_raw/pair_data/simplified/"
+    base_url="/root/liwenju/sighan_raw/pair_data/simplified/"
