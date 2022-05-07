@@ -26,7 +26,7 @@ SIGHAN-2015 shared task on CSC: [LINK](http://ir.itc.ntnu.edu.tw/lre/sighan8csc_
 运行程序
 
 ```shell
-python generate_pair_data.py
+python generate_json_data.py
 ```
 
 ### 繁体
