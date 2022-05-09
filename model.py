@@ -90,7 +90,7 @@ def compute_sentence_level_prf(results):
 
 
 class CscModel(nn.Module):
-    def __init__(self, tokenizer, cfg=cfg, device="cpu"):
+    def __init__(self, tokenizer, cfg=cfg, device="cuda"):
         super().__init__()
         self.cfg = cfg
         self.device = device
