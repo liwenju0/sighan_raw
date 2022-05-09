@@ -12,5 +12,5 @@ class cfg:
     loss_weight = 0.3
     train = "train15.json"
     test = "test15.json"
-    #base_url = "/Users/milter/Downloads/sighan_raw/pair_data/simplified/"
-    base_url="/root/liwenju/sighan_raw/pair_data/simplified/"
+    base_url = "/Users/milter/Downloads/sighan_raw/pair_data/simplified/"
+    # base_url="/root/liwenju/sighan_raw/pair_data/simplified/"

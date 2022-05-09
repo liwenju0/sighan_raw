@@ -90,7 +90,7 @@ def compute_sentence_level_prf(results):
 
 
 class CscModel(nn.Module):
-    def __init__(self, tokenizer, cfg=cfg, device="cuda"):
+    def __init__(self, tokenizer, cfg=cfg, device="cpu"):
         super().__init__()
         self.cfg = cfg
         self.device = device
@@ -106,8 +106,8 @@ class CscModel(nn.Module):
         # Negative Samples Selection
         active_probs = vocab_prob[mask == 1].reshape(-1, vocab_prob.shape[-1])
         active_labels = pos_idx[mask == 1].reshape(-1, )
-        pos_prob = torch.gather(active_probs, 1, active_labels.unsqueeze(1)).squeeze(-1)
-        neg_prob = torch.topk(vocab_prob, K)[0]
+        pos_prob = torch.gather(active_probs, 1, active_labels.unsqueeze(1))
+        neg_prob = torch.topk(active_probs, K)[0]
         loss = (neg_prob - pos_prob).mean()
         return loss
         # # Contrastive Probability Optimization Objective
