@@ -26,8 +26,8 @@ optimizer = AdamW(params=optimizer_grouped_parameters, lr=cfg.lr)
 epoches = 20
 for i in range(epoches):
     for step, (ori_texts, cor_texts, det_labels) in enumerate(train_loader):
-        det_loss, cor_loss, det_pred, cor_pred = model(ori_texts, cor_labels=cor_texts, det_labels=det_labels)
-        loss = cfg.loss_weight*det_loss + (1-cfg.loss_weight)*cor_loss
+        det_loss, cor_loss, det_pred, cor_pred, cons_loss = model(ori_texts, cor_labels=cor_texts, det_labels=det_labels)
+        loss = 0.2*det_loss + 0.6*cor_loss + 0.2*cons_loss
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()

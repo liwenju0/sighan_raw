@@ -4,9 +4,10 @@ import torch
 import torch.nn as nn
 from transformers import BertForMaskedLM
 from transformers import BertTokenizerFast
-from data_process import  convert_to_unicode, split_text_by_maxlen, get_errors
+from data_process import convert_to_unicode, split_text_by_maxlen, get_errors
 from config import cfg
-import  time
+import time
+
 
 class FocalLoss(nn.Module):
     """
@@ -85,8 +86,8 @@ def compute_sentence_level_prf(results):
     recall = TP / (TP + FN) if TP > 0 else 0.0
     f1 = 2 * precision * recall / (precision + recall) if precision + recall != 0 else 0
 
-
     return acc, precision, recall, f1
+
 
 class CscModel(nn.Module):
     def __init__(self, tokenizer, cfg=cfg, device="cuda"):
@@ -98,6 +99,23 @@ class CscModel(nn.Module):
         self.sigmoid = nn.Sigmoid().to(self.device)
         self.tokenizer = tokenizer
 
+    def compute_contrastive_loss(self, mask, vocab_prob, pos_idx, K=5):
+        # vocab_prob : the prediction probability for all characters in vocabulary
+        # pos_idx : the index of positive sample (golden character) in vocabulary
+        # K : the selected negative samples amount
+        # Negative Samples Selection
+        active_probs = vocab_prob[mask == 1].reshape(-1, vocab_prob.shape[-1])
+        active_labels = pos_idx[mask == 1].reshape(-1, )
+        pos_prob = torch.gather(active_probs, 1, active_labels.unsqueeze(1)).squeeze(-1)
+        neg_prob = torch.topk(vocab_prob, K)[0]
+        loss = (neg_prob - pos_prob).mean()
+        return loss
+        # # Contrastive Probability Optimization Objective
+        # loss_list = []
+        # for x in range(0, K):
+        #     if neg_idx[x] != pos_idx:
+        #         loss_list.append(pos_prob - neg_prob[x])
+        # loss = - torch.stack(loss_list).mean()
 
     def forward(self, texts, cor_labels=None, det_labels=None):
         if cor_labels:
@@ -126,10 +144,12 @@ class CscModel(nn.Module):
             active_labels = det_labels[active_loss]
             det_loss = det_loss_fct(active_probs, active_labels.float())
             # 检错loss，纠错loss，检错输出，纠错输出
+
+            cons_loss = self.compute_contrastive_loss(encoded_text['attention_mask'], bert_outputs.logits, text_labels)
             outputs = (det_loss,
                        bert_outputs.loss,
                        self.sigmoid(prob).squeeze(-1),
-                       bert_outputs.logits)
+                       bert_outputs.logits, cons_loss)
         return outputs
 
     def correct(self, text):
